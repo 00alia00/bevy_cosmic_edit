@@ -52,7 +52,7 @@
 //! MIT or Apache-2.0
 #![allow(clippy::type_complexity)]
 
-pub use bevy::text::cosmic_text;
+pub use cosmic_text;
 pub use primary::*;
 /// Contains the library global important types you probably want to explore first
 mod primary;
@@ -60,6 +60,8 @@ mod primary;
 pub mod prelude {
     // non-pub external re-exports
     pub(crate) use bevy::prelude::*;
+    // Explicitly import logging macros to avoid shadowing by #[warn] lint attribute
+    pub(crate) use bevy::log::{debug, trace, warn, warn_once};
     pub(crate) use bevy::text::SwashCache;
     pub(crate) use cosmic_text::Buffer;
     pub(crate) use cosmic_text::Edit as _;

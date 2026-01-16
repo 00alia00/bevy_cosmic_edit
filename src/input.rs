@@ -1,7 +1,7 @@
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
 
 use crate::{cosmic_edit::ScrollEnabled, prelude::*};
-use bevy::ecs::{component::ComponentId, world::DeferredWorld};
+use bevy::ecs::{lifecycle::HookContext, world::DeferredWorld};
 
 pub mod click;
 pub mod clipboard;
@@ -32,9 +32,9 @@ pub(crate) fn plugin(app: &mut App) {
                 .chain()
                 .in_set(InputSet),
         )
-        .add_event::<hover::TextHoverIn>()
-        .add_event::<hover::TextHoverOut>()
-        .add_event::<CosmicTextChanged>()
+        .add_message::<hover::TextHoverIn>()
+        .add_message::<hover::TextHoverOut>()
+        .add_message::<CosmicTextChanged>()
         .register_type::<hover::TextHoverIn>()
         .register_type::<hover::TextHoverOut>()
         .register_type::<CosmicTextChanged>();
@@ -51,7 +51,7 @@ pub(crate) fn plugin(app: &mut App) {
 ///
 /// Sent when text is changed in a cosmic buffer
 /// Contains the entity on which the text was changed, and the new text as a [`String`]
-#[derive(Event, Reflect, Debug)]
+#[derive(Message, Reflect, Debug)]
 pub struct CosmicTextChanged(pub (Entity, String));
 
 /// First variant is least important, last is most important
@@ -69,8 +69,7 @@ pub(crate) enum InputState {
 
 fn add_event_handlers(
     mut world: DeferredWorld,
-    targeted_entity: Entity,
-    _component_id: ComponentId,
+    HookContext { entity: targeted_entity, .. }: HookContext,
 ) {
     let mut observers = [
         Observer::new(click::handle_focused_click.pipe(render_implementations::debug_error)),
@@ -112,10 +111,10 @@ pub mod cancel {
     }
 
     pub(super) fn handle_cancel(
-        trigger: Trigger<Pointer<Cancel>>,
+        event: On<Pointer<Cancel>>,
         mut editor: Query<&mut InputState, With<CosmicEditBuffer>>,
     ) {
-        let Ok(mut input_state) = editor.get_mut(trigger.target) else {
+        let Ok(mut input_state) = editor.get_mut(event.entity) else {
             warn_no_editor_on_picking_event("handling cursor `Cancel` event");
             return;
         };

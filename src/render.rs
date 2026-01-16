@@ -353,9 +353,11 @@ fn render_texture(
         }
 
         if let Some(prev_image) = images.get_mut(&canvas.0) {
-            prev_image.data.clear();
-            // Updates the stored asset image with the computed pixels
-            prev_image.data.extend_from_slice(pixels.as_slice());
+            if let Some(ref mut data) = prev_image.data {
+                data.clear();
+                // Updates the stored asset image with the computed pixels
+                data.extend_from_slice(pixels.as_slice());
+            }
             prev_image.resize(Extent3d {
                 width: render_target_size.x as u32,
                 height: render_target_size.y as u32,

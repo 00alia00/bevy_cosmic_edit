@@ -1,6 +1,7 @@
 //! Manages the OS-level cursor aka mouse pointer visibility
 
 use bevy::input::mouse::MouseMotion;
+use bevy::window::CursorOptions;
 use bevy::{ecs::system::SystemParam, window::PrimaryWindow};
 
 use crate::prelude::*;
@@ -8,19 +9,19 @@ use crate::prelude::*;
 use crate::input::CosmicTextChanged;
 
 #[derive(SystemParam)]
-pub(crate) struct CursorVisibility<'w> {
-    window: Single<'w, &'static mut Window, With<PrimaryWindow>>,
+pub(crate) struct CursorVisibility<'w, 's> {
+    cursor_options: Single<'w, 's, &'static mut CursorOptions, With<PrimaryWindow>>,
 }
 
-impl CursorVisibility<'_> {
+impl CursorVisibility<'_, '_> {
     pub fn set_cursor_visibility(&mut self, visible: bool) {
-        self.window.cursor_options.visible = visible;
+        self.cursor_options.visible = visible;
     }
 }
 
 pub(super) fn update_cursor_visibility(
-    editors_text_changed: EventReader<CosmicTextChanged>,
-    mouse_moved: EventReader<MouseMotion>,
+    editors_text_changed: MessageReader<CosmicTextChanged>,
+    mouse_moved: MessageReader<MouseMotion>,
     mouse_clicked: Res<ButtonInput<MouseButton>>,
     mut cursor_visibility: CursorVisibility,
 ) {

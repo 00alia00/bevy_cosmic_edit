@@ -9,7 +9,7 @@ fn setup(
     windows: Query<&Window, With<PrimaryWindow>>,
     mut font_system: ResMut<CosmicFontSystem>,
 ) {
-    let primary_window = windows.single();
+    let primary_window = windows.single().unwrap();
     let camera_bundle = (
         Camera2d,
         Camera {

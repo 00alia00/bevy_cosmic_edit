@@ -1,3 +1,4 @@
+use bevy::picking::pointer::PointerButton;
 use crate::prelude::*;
 
 use super::{warn_no_editor_on_picking_event, InputState};
@@ -58,13 +59,13 @@ impl InputState {
 }
 
 pub(super) fn handle_dragstart(
-    trigger: Trigger<Pointer<DragStart>>,
+    on: On<Pointer<DragStart>>,
     mut editor: Query<(&mut InputState, &mut CosmicEditor, RelativeQuery), With<CosmicEditBuffer>>,
     mut font_system: ResMut<CosmicFontSystem>,
 ) -> render_implementations::Result<()> {
     let font_system = &mut font_system.0;
-    let event = trigger.event();
-    let Ok((mut input_state, mut editor, sprite_relative)) = editor.get_mut(trigger.target) else {
+    let event = on.event();
+    let Ok((mut input_state, mut editor, sprite_relative)) = editor.get_mut(on.entity) else {
         warn_no_editor_on_picking_event("handling cursor `DragStart` event");
         return Ok(());
     };
@@ -93,13 +94,13 @@ pub(super) fn handle_dragstart(
 }
 
 pub(super) fn handle_drag_continue(
-    trigger: Trigger<Pointer<Drag>>,
+    on: On<Pointer<Drag>>,
     mut editor: Query<(&InputState, &mut CosmicEditor)>,
     mut font_system: ResMut<CosmicFontSystem>,
 ) {
     let font_system = &mut font_system.0;
-    let event = &trigger.event;
-    let entity = trigger.target;
+    let event = on.event();
+    let entity = on.entity;
 
     if event.button != PointerButton::Primary {
         return;
@@ -128,11 +129,11 @@ pub(super) fn handle_drag_continue(
 }
 
 pub(super) fn handle_dragend(
-    trigger: Trigger<Pointer<DragEnd>>,
+    on: On<Pointer<DragEnd>>,
     mut editor: Query<&mut InputState, With<CosmicEditBuffer>>,
 ) {
-    let event = &trigger.event;
-    let entity = trigger.target;
+    let event = on.event();
+    let entity = on.entity;
 
     if event.button != PointerButton::Primary {
         return;

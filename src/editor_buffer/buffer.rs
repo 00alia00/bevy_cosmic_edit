@@ -119,8 +119,7 @@ impl Default for CosmicEditBuffer {
 
 fn on_buffer_add(
     mut world: bevy::ecs::world::DeferredWorld,
-    target: Entity,
-    _: bevy::ecs::component::ComponentId,
+    bevy::ecs::lifecycle::HookContext { entity: target, .. }: bevy::ecs::lifecycle::HookContext,
 ) {
     // set redraw
     world
@@ -152,7 +151,7 @@ impl<'s, 'r> CosmicEditBuffer {
         text: &'s str,
         attrs: Attrs<'r>,
     ) -> Self {
-        self.0.set_text(font_system, text, attrs, Shaping::Advanced);
+        self.0.set_text(font_system, text, &attrs, Shaping::Advanced, None);
         self.0.set_redraw(true);
         self
     }
@@ -170,7 +169,7 @@ impl<'s, 'r> CosmicEditBuffer {
         I: IntoIterator<Item = (&'s str, Attrs<'r>)>,
     {
         self.0
-            .set_rich_text(font_system, spans, attrs, Shaping::Advanced);
+            .set_rich_text(font_system, spans, &attrs, Shaping::Advanced, None);
         self
     }
 
@@ -181,7 +180,7 @@ impl<'s, 'r> CosmicEditBuffer {
         text: &'s str,
         attrs: Attrs<'r>,
     ) -> &mut Self {
-        self.0.set_text(font_system, text, attrs, Shaping::Advanced);
+        self.0.set_text(font_system, text, &attrs, Shaping::Advanced, None);
         self.0.set_redraw(true);
         self
     }
@@ -199,7 +198,7 @@ impl<'s, 'r> CosmicEditBuffer {
         I: IntoIterator<Item = (&'s str, Attrs<'r>)>,
     {
         self.0
-            .set_rich_text(font_system, spans, attrs, Shaping::Advanced);
+            .set_rich_text(font_system, spans, &attrs, Shaping::Advanced, None);
         self.0.set_redraw(true);
         self
     }
@@ -266,7 +265,7 @@ pub(in crate::editor_buffer) fn add_font_system(
 ) {
     for mut b in q.iter_mut() {
         if b.0.lines.is_empty() {
-            b.0.set_text(&mut font_system, "", Attrs::new(), Shaping::Advanced);
+            b.0.set_text(&mut font_system, "", &Attrs::new(), Shaping::Advanced, None);
             b.0.set_redraw(true);
         }
     }
@@ -278,7 +277,7 @@ pub(in crate::editor_buffer) fn set_initial_scale(
     mut cosmic_query: Query<&mut CosmicEditBuffer, Added<CosmicEditBuffer>>,
     mut font_system: ResMut<CosmicFontSystem>,
 ) {
-    if let Ok(window) = window_q.get_single() {
+    if let Ok(window) = window_q.single() {
         let w_scale = window.scale_factor();
 
         for mut b in &mut cosmic_query.iter_mut() {

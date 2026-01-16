@@ -1,7 +1,6 @@
 use bevy::{
     ecs::system::SystemParam,
-    window::{PrimaryWindow, SystemCursorIcon},
-    winit::cursor::CursorIcon,
+    window::{CursorIcon, PrimaryWindow, SystemCursorIcon},
 };
 
 use crate::prelude::*;
@@ -10,7 +9,7 @@ use super::{hover::HoverCursor, InputState};
 
 #[derive(SystemParam)]
 pub(crate) struct CursorIconUpdate<'w, 's> {
-    window: Single<'w, Entity, With<PrimaryWindow>>,
+    window: Single<'w, 's, Entity, With<PrimaryWindow>>,
     commands: Commands<'w, 's>,
 }
 

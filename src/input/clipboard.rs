@@ -30,7 +30,7 @@ pub(crate) struct WasmPasteAsyncChannel {
 pub(crate) fn kb_clipboard(
     active_editor: Res<FocusedWidget>,
     keys: Res<ButtonInput<KeyCode>>,
-    mut evw_changed: EventWriter<CosmicTextChanged>,
+    mut evw_changed: MessageWriter<CosmicTextChanged>,
     #[allow(unused_variables, unused_mut)] mut font_system: ResMut<CosmicFontSystem>,
     mut cosmic_edit_query: Query<(
         &mut CosmicEditor,
@@ -129,7 +129,7 @@ pub(crate) fn kb_clipboard(
             return;
         }
 
-        evw_changed.send(CosmicTextChanged((entity, editor.get_text())));
+        evw_changed.write(CosmicTextChanged((entity, editor.get_text())));
     }
 }
 
@@ -151,7 +151,7 @@ pub fn read_clipboard_wasm() -> Promise {
 pub(crate) fn poll_wasm_paste(
     channel: Res<WasmPasteAsyncChannel>,
     mut editor_q: Query<(&mut CosmicEditor, &MaxChars, &MaxChars), Without<ReadOnly>>,
-    mut evw_changed: EventWriter<CosmicTextChanged>,
+    mut evw_changed: MessageWriter<CosmicTextChanged>,
     mut font_system: ResMut<CosmicFontSystem>,
 ) {
     let inlet = channel.rx.try_recv();
@@ -174,7 +174,7 @@ pub(crate) fn poll_wasm_paste(
                     }
                 }
 
-                evw_changed.send(CosmicTextChanged((entity, editor.get_text())));
+                evw_changed.write(CosmicTextChanged((entity, editor.get_text())));
             }
         }
         Err(_) => {}

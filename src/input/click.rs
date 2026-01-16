@@ -1,3 +1,4 @@
+use bevy::picking::pointer::PointerButton;
 use crate::{
     double_click::{ClickCount, ClickState},
     prelude::*,
@@ -5,7 +6,7 @@ use crate::{
 
 use super::InputState;
 use cosmic_text::{Action, Motion, Selection};
-use render_implementations::{RelativeQuery, RenderTargetError, RenderTypeScan};
+use render_implementations::{RelativeQuery, RenderTypeScan};
 
 impl InputState {
     /// Handler for [`Click`] event
@@ -30,11 +31,11 @@ impl InputState {
 
 /// An [`Observer`] that focuses on the desired editor when clicked
 pub fn focus_on_click(
-    trigger: Trigger<Pointer<Click>>,
+    event: On<Pointer<Click>>,
     mut focused: ResMut<FocusedWidget>,
     editor_confirmation: Query<RenderTypeScan, With<CosmicEditBuffer>>,
 ) {
-    let Ok(scan) = editor_confirmation.get(trigger.target) else {
+    let Ok(scan) = editor_confirmation.get(event.entity) else {
         warn!(
             "An entity with the `focus_on_click` observer added was clicked, but didn't have a `CosmicEditBuffer` component",
         );
@@ -43,21 +44,17 @@ pub fn focus_on_click(
 
     match scan.confirm_conformance() {
         Ok(_) => {
-            focused.0 = Some(trigger.target);
-        }
-        Err(RenderTargetError::NoTargetsAvailable) => {
-            warn!("Please use a high-level driver component from `bevy_cosmic_edit::render_implementations` to add the `CosmicEditBuffer` component, e.g. `TextEdit` or `TextEdit2d`");
+            focused.0 = Some(event.entity);
         }
         Err(err) => {
             warn!(message = "For some reason, the entity that `focus_on_click` was triggered for isn't a valid `CosmicEditor`", ?err);
-            // render_implementations::debug_error::<()>(In(Err(err)));
         }
     }
 }
 
 /// Handles [`CosmicEditor`] widgets that are already focussed
 pub(super) fn handle_focused_click(
-    trigger: Trigger<Pointer<Click>>,
+    event: On<Pointer<Click>>,
     focused: Res<FocusedWidget>,
     mut editor: Query<(&mut InputState, &mut CosmicEditor, RelativeQuery)>,
     mut font_system: ResMut<CosmicFontSystem>,
@@ -65,8 +62,8 @@ pub(super) fn handle_focused_click(
     mut click_state: ClickState,
 ) -> render_implementations::Result<()> {
     let font_system = &mut font_system.0;
-    let target = trigger.target;
-    let click = trigger.event();
+    let target = event.entity;
+    let click = event.event();
 
     // must be focused
     if focused.0 != Some(target) {

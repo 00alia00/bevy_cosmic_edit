@@ -24,8 +24,7 @@ pub enum CosmicWrap {
 
 fn check_align_sanity(
     world: bevy::ecs::world::DeferredWorld,
-    target: Entity,
-    _: bevy::ecs::component::ComponentId,
+    bevy::ecs::lifecycle::HookContext { entity: target, .. }: bevy::ecs::lifecycle::HookContext,
 ) {
     if let Some(CosmicWrap::InfiniteLine) = world.get(target) {
         let Some(align) = world.get::<CosmicTextAlign>(target) else {
@@ -151,7 +150,7 @@ pub struct DefaultAttrs(pub AttrsOwned);
 
 impl Default for DefaultAttrs {
     fn default() -> Self {
-        DefaultAttrs(AttrsOwned::new(Attrs::new()))
+        DefaultAttrs(AttrsOwned::new(&Attrs::new()))
     }
 }
 

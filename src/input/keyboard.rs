@@ -176,7 +176,7 @@ pub(crate) fn kb_move_cursor(
 pub(crate) fn kb_input_text(
     active_editor: Res<FocusedWidget>,
     keys: Res<ButtonInput<KeyCode>>,
-    mut char_evr: EventReader<KeyboardInput>,
+    mut char_evr: MessageReader<KeyboardInput>,
     mut cosmic_edit_query: Query<(
         &mut CosmicEditor,
         &MaxLines,
@@ -184,7 +184,7 @@ pub(crate) fn kb_input_text(
         Entity,
         Option<&ReadOnly>,
     )>,
-    mut evw_changed: EventWriter<CosmicTextChanged>,
+    mut evw_changed: MessageWriter<CosmicTextChanged>,
     mut font_system: ResMut<CosmicFontSystem>,
     mut is_deleting: Local<bool>,
 ) {
@@ -285,7 +285,7 @@ pub(crate) fn kb_input_text(
             return;
         }
 
-        evw_changed.send(CosmicTextChanged((
+        evw_changed.write(CosmicTextChanged((
             entity,
             editor.with_buffer_mut(|b| b.get_text()),
         )));

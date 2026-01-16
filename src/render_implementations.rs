@@ -13,15 +13,18 @@
 // TODO: Remove `CosmicWidgetSize`?
 
 mod prelude {
-    pub(super) use super::error::Result;
     pub(super) use super::{RenderTargetError, SourceType};
     pub(super) use super::{RenderTypeScan, RenderTypeScanItem};
 }
 
-pub use error::*;
+// Re-export error types explicitly, but not Result to avoid ambiguity
+pub use error::{Error, RenderTargetError, Result};
 mod error {
+    use bevy::ecs::error::BevyError;
+    use std::fmt;
+    
     pub type Error = crate::render_implementations::RenderTargetError;
-    pub type Result<T> = core::result::Result<T, RenderTargetError>;
+    pub type Result<T> = core::result::Result<T, BevyError>;
 
     #[derive(Debug)]
     pub enum RenderTargetError {
@@ -51,6 +54,25 @@ mod error {
 
         UiExpectedCursorPosition,
     }
+
+    impl fmt::Display for RenderTargetError {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            match self {
+                Self::NoTargetsAvailable => write!(f, "No render targets available"),
+                Self::MoreThanOneTargetAvailable => write!(f, "More than one render target available"),
+                Self::RequiredComponentNotAvailable { debug_name } => write!(f, "Required component not available: {}", debug_name),
+                Self::SpriteCustomSizeNotSet => write!(f, "Sprite custom size not set"),
+                Self::SpriteUnexpectedNormal => write!(f, "Sprite has unexpected normal"),
+                Self::SpriteExpectedHitdataPosition => write!(f, "Sprite expected hit data position"),
+                Self::UiExpectedCursorPosition => write!(f, "UI expected cursor position"),
+            }
+        }
+    }
+
+    impl std::error::Error for RenderTargetError {}
+
+    // Note: Bevy 0.18 has blanket `impl<E: Error + Send + Sync + 'static> From<E> for BevyError`
+    // so we don't need a custom impl - it's automatic for types implementing std::error::Error
 
     impl RenderTargetError {
         pub fn required_component_missing<C: bevy::prelude::Component>() -> Self {

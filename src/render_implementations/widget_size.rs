@@ -2,6 +2,7 @@ use bevy::ecs::query::{QueryData, QueryFilter};
 use render_implementations::{RenderTypeScan, RenderTypeScanItem};
 
 use crate::prelude::*;
+use crate::render_implementations::Result;
 use render_implementations::prelude::*;
 
 /// Query the (logical) size of a widget
@@ -14,8 +15,8 @@ pub struct CosmicWidgetSize {
 }
 
 /// Allows `.scan()` to be called on a [`CosmicWidgetSize`] through deref
-impl<'s> std::ops::Deref for CosmicWidgetSizeItem<'s> {
-    type Target = RenderTypeScanItem<'s>;
+impl<'w, 's> std::ops::Deref for CosmicWidgetSizeItem<'w, 's> {
+    type Target = RenderTypeScanItem<'w, 's>;
 
     fn deref(&self) -> &Self::Target {
         &self.scan
@@ -39,7 +40,7 @@ impl NodeSizeExt for ComputedNode {
     }
 }
 
-impl CosmicWidgetSizeItem<'_> {
+impl CosmicWidgetSizeItem<'_, '_> {
     /// Automatically logs any errors
     pub fn logical_size(&self) -> Result<Vec2> {
         let ret = self._logical_size();

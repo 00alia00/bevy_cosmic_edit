@@ -1,6 +1,7 @@
 use bevy::ecs::query::QueryData;
 
 use crate::prelude::*;
+use crate::render_implementations::Result;
 use crate::render_implementations::prelude::*;
 
 /// TODO: Generalize implementations depending on this
@@ -17,7 +18,7 @@ pub struct RenderTypeScan {
     is_ui: Has<TextEdit>,
 }
 
-impl RenderTypeScanItem<'_> {
+impl RenderTypeScanItem<'_, '_> {
     pub fn confirm_conformance(&self) -> Result<()> {
         match self.scan() {
             Ok(_) => Ok(()),
@@ -29,8 +30,8 @@ impl RenderTypeScanItem<'_> {
         match (self.is_sprite, self.is_ui) {
             (true, false) => Ok(SourceType::Sprite),
             (false, true) => Ok(SourceType::Ui),
-            (true, true) => Err(RenderTargetError::MoreThanOneTargetAvailable),
-            (false, false) => Err(RenderTargetError::NoTargetsAvailable),
+            (true, true) => Err(RenderTargetError::MoreThanOneTargetAvailable.into()),
+            (false, false) => Err(RenderTargetError::NoTargetsAvailable.into()),
         }
     }
 }
@@ -38,6 +39,6 @@ impl RenderTypeScanItem<'_> {
 pub(crate) fn debug_error<T>(In(result): In<Result<T>>) {
     match result {
         Ok(_) => {}
-        Err(err) => debug!(message = "Error in render target", ?err),
+        Err(ref err) => debug!(message = "Error in render target", ?err),
     }
 }

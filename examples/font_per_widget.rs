@@ -2,7 +2,7 @@
 
 use bevy::prelude::*;
 use bevy_cosmic_edit::{
-    cosmic_text::{Attrs, Family, Metrics},
+    cosmic_text::{Attrs, Family, Metrics, Weight as FontWeight},
     prelude::*,
 };
 
@@ -18,141 +18,143 @@ fn setup(mut commands: Commands, mut font_system: ResMut<CosmicFontSystem>) {
         .id();
 
     let attrs = Attrs::new();
-    let serif_attrs = attrs.family(Family::Serif);
-    let mono_attrs = attrs.family(Family::Monospace);
-    let comic_attrs = attrs.family(Family::Name("Comic Neue"));
+    let serif_attrs = attrs.clone().family(Family::Serif);
+    let mono_attrs = attrs.clone().family(Family::Monospace);
+    let comic_attrs = attrs.clone().family(Family::Name("Comic Neue"));
     let lines = vec![
-        ("B", attrs.weight(FontWeight::BOLD)),
-        ("old ", attrs),
-        ("I", attrs.style(FontStyle::Italic)),
-        ("talic ", attrs),
-        ("f", attrs),
-        ("i ", attrs),
-        ("f", attrs.weight(FontWeight::BOLD)),
-        ("i ", attrs),
-        ("f", attrs.style(FontStyle::Italic)),
-        ("i ", attrs),
-        ("Sans-Serif Normal ", attrs),
-        ("Sans-Serif Bold ", attrs.weight(FontWeight::BOLD)),
-        ("Sans-Serif Italic ", attrs.style(FontStyle::Italic)),
+        ("B", attrs.clone().weight(FontWeight::BOLD)),
+        ("old ", attrs.clone()),
+        ("I", attrs.clone().style(FontStyle::Italic)),
+        ("talic ", attrs.clone()),
+        ("f", attrs.clone()),
+        ("i ", attrs.clone()),
+        ("f", attrs.clone().weight(FontWeight::BOLD)),
+        ("i ", attrs.clone()),
+        ("f", attrs.clone().style(FontStyle::Italic)),
+        ("i ", attrs.clone()),
+        ("Sans-Serif Normal ", attrs.clone()),
+        ("Sans-Serif Bold ", attrs.clone().weight(FontWeight::BOLD)),
+        ("Sans-Serif Italic ", attrs.clone().style(FontStyle::Italic)),
         (
             "Sans-Serif Bold Italic",
-            attrs.weight(FontWeight::BOLD).style(FontStyle::Italic),
+            attrs.clone().weight(FontWeight::BOLD).style(FontStyle::Italic),
         ),
-        ("Serif Normal ", serif_attrs),
-        ("Serif Bold ", serif_attrs.weight(FontWeight::BOLD)),
-        ("Serif Italic ", serif_attrs.style(FontStyle::Italic)),
+        ("Serif Normal ", serif_attrs.clone()),
+        ("Serif Bold ", serif_attrs.clone().weight(FontWeight::BOLD)),
+        ("Serif Italic ", serif_attrs.clone().style(FontStyle::Italic)),
         (
             "Serif Bold Italic",
             serif_attrs
+                .clone()
                 .weight(FontWeight::BOLD)
                 .style(FontStyle::Italic),
         ),
-        ("\n", attrs),
-        ("Mono Normal ", mono_attrs),
-        ("Mono Bold ", mono_attrs.weight(FontWeight::BOLD)),
-        ("Mono Italic ", mono_attrs.style(FontStyle::Italic)),
+        ("\n", attrs.clone()),
+        ("Mono Normal ", mono_attrs.clone()),
+        ("Mono Bold ", mono_attrs.clone().weight(FontWeight::BOLD)),
+        ("Mono Italic ", mono_attrs.clone().style(FontStyle::Italic)),
         (
             "Mono Bold Italic",
-            mono_attrs.weight(FontWeight::BOLD).style(FontStyle::Italic),
+            mono_attrs.clone().weight(FontWeight::BOLD).style(FontStyle::Italic),
         ),
-        ("Comic Normal ", comic_attrs),
-        ("Comic Bold ", comic_attrs.weight(FontWeight::BOLD)),
-        ("Comic Italic ", comic_attrs.style(FontStyle::Italic)),
+        ("Comic Normal ", comic_attrs.clone()),
+        ("Comic Bold ", comic_attrs.clone().weight(FontWeight::BOLD)),
+        ("Comic Italic ", comic_attrs.clone().style(FontStyle::Italic)),
         (
             "Comic Bold Italic",
             comic_attrs
+                .clone()
                 .weight(FontWeight::BOLD)
                 .style(FontStyle::Italic),
         ),
-        ("\n", attrs),
+        ("\n", attrs.clone()),
         (
             "R",
-            attrs.color(bevy::color::palettes::css::RED.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::RED.to_cosmic()),
         ),
         (
             "A",
-            attrs.color(bevy::color::palettes::css::ORANGE.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::ORANGE.to_cosmic()),
         ),
         (
             "I",
-            attrs.color(bevy::color::palettes::css::YELLOW.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::YELLOW.to_cosmic()),
         ),
         (
             "N",
-            attrs.color(bevy::color::palettes::css::LIMEGREEN.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::LIMEGREEN.to_cosmic()),
         ),
         (
             "B",
-            attrs.color(bevy::color::palettes::css::BLUE.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::BLUE.to_cosmic()),
         ),
         (
             "O",
-            attrs.color(bevy::color::palettes::css::INDIGO.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::INDIGO.to_cosmic()),
         ),
         (
             "W ",
-            attrs.color(bevy::color::palettes::css::PURPLE.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::PURPLE.to_cosmic()),
         ),
         (
             "Red ",
-            attrs.color(bevy::color::palettes::css::RED.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::RED.to_cosmic()),
         ),
         (
             "Orange ",
-            attrs.color(bevy::color::palettes::css::ORANGE.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::ORANGE.to_cosmic()),
         ),
         (
             "Yellow ",
-            attrs.color(bevy::color::palettes::css::YELLOW.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::YELLOW.to_cosmic()),
         ),
         (
             "Green ",
-            attrs.color(bevy::color::palettes::css::LIMEGREEN.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::LIMEGREEN.to_cosmic()),
         ),
         (
             "Blue ",
-            attrs.color(bevy::color::palettes::css::BLUE.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::BLUE.to_cosmic()),
         ),
         (
             "Indigo ",
-            attrs.color(bevy::color::palettes::css::INDIGO.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::INDIGO.to_cosmic()),
         ),
         (
             "Violet ",
-            attrs.color(bevy::color::palettes::css::PURPLE.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::PURPLE.to_cosmic()),
         ),
         (
             "U",
-            attrs.color(bevy::color::palettes::css::PURPLE.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::PURPLE.to_cosmic()),
         ),
         (
             "N",
-            attrs.color(bevy::color::palettes::css::INDIGO.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::INDIGO.to_cosmic()),
         ),
         (
             "I",
-            attrs.color(bevy::color::palettes::css::BLUE.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::BLUE.to_cosmic()),
         ),
         (
             "C",
-            attrs.color(bevy::color::palettes::css::LIMEGREEN.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::LIMEGREEN.to_cosmic()),
         ),
         (
             "O",
-            attrs.color(bevy::color::palettes::css::YELLOW.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::YELLOW.to_cosmic()),
         ),
         (
             "R",
-            attrs.color(bevy::color::palettes::css::ORANGE.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::ORANGE.to_cosmic()),
         ),
         (
             "N",
-            attrs.color(bevy::color::palettes::css::RED.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::RED.to_cosmic()),
         ),
         (
             "生活,삶,जिंदगी 😀 FPS",
-            attrs.color(bevy::color::palettes::css::RED.to_cosmic()),
+            attrs.clone().color(bevy::color::palettes::css::RED.to_cosmic()),
         ),
     ];
 

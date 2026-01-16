@@ -33,7 +33,7 @@ pub struct EditorBuffer {
     buffer: &'static mut CosmicEditBuffer,
 }
 
-impl std::ops::Deref for EditorBufferItem<'_> {
+impl std::ops::Deref for EditorBufferItem<'_, '_> {
     type Target = Buffer;
 
     fn deref(&self) -> &Self::Target {
@@ -41,13 +41,13 @@ impl std::ops::Deref for EditorBufferItem<'_> {
     }
 }
 
-impl std::ops::DerefMut for EditorBufferItem<'_> {
+impl std::ops::DerefMut for EditorBufferItem<'_, '_> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.get_raw_buffer_mut()
     }
 }
 
-impl<'r, 's> EditorBufferItem<'_> {
+impl<'r, 's> EditorBufferItem<'_, '_> {
     pub fn editor(&mut self) -> Option<&mut CosmicEditor> {
         self.editor.as_deref_mut()
     }
@@ -60,7 +60,7 @@ impl<'r, 's> EditorBufferItem<'_> {
         attrs: Attrs<'r>,
     ) -> &mut Self {
         self.get_raw_buffer_mut()
-            .set_text(font_system, text, attrs, Shaping::Advanced);
+            .set_text(font_system, text, &attrs, Shaping::Advanced, None);
         self.set_redraw(true);
         self
     }
@@ -78,7 +78,7 @@ impl<'r, 's> EditorBufferItem<'_> {
         I: IntoIterator<Item = (&'s str, Attrs<'r>)>,
     {
         self.get_raw_buffer_mut()
-            .set_rich_text(font_system, spans, attrs, Shaping::Advanced);
+            .set_rich_text(font_system, spans, &attrs, Shaping::Advanced, None);
         self.set_redraw(true);
         self
     }
@@ -130,7 +130,7 @@ impl<'r, 's> EditorBufferItem<'_> {
     }
 }
 
-impl buffer::BufferRefExtras for EditorBufferItem<'_> {
+impl buffer::BufferRefExtras for EditorBufferItem<'_, '_> {
     fn get_text(&self) -> String {
         self.with_buffer(|b| b.get_text())
     }
@@ -141,7 +141,7 @@ pub struct ManuallyBorrowedWithFontSystem<'a, T> {
     inner: &'a mut T,
 }
 
-impl ManuallyBorrowedWithFontSystem<'_, EditorBufferItem<'_>> {
+impl ManuallyBorrowedWithFontSystem<'_, EditorBufferItem<'_, '_>> {
     pub fn with_buffer_mut<F: FnOnce(&mut cosmic_text::BorrowedWithFontSystem<Buffer>) -> T, T>(
         &mut self,
         f: F,
@@ -153,7 +153,7 @@ impl ManuallyBorrowedWithFontSystem<'_, EditorBufferItem<'_>> {
     }
 }
 
-impl buffer::BufferMutExtras for ManuallyBorrowedWithFontSystem<'_, EditorBufferItem<'_>> {
+impl buffer::BufferMutExtras for ManuallyBorrowedWithFontSystem<'_, EditorBufferItem<'_, '_>> {
     fn width(&mut self) -> f32 {
         self.with_buffer_mut(|b| b.width())
     }

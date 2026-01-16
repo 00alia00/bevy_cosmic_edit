@@ -73,8 +73,7 @@ pub(crate) fn drop_editor_unfocused(
 /// Placed as on_remove hook for [`CosmicEditBuffer`] and [`CosmicEditor`]
 pub(crate) fn remove_focus_from_entity(
     mut world: bevy::ecs::world::DeferredWorld,
-    entity: Entity,
-    _: bevy::ecs::component::ComponentId,
+    bevy::ecs::lifecycle::HookContext { entity, .. }: bevy::ecs::lifecycle::HookContext,
 ) {
     if let Some(mut focused_widget) = world.get_resource_mut::<FocusedWidget>() {
         if let Some(focused) = focused_widget.0 {

@@ -66,8 +66,7 @@ pub(crate) struct CosmicRenderOutput(pub(crate) Handle<Image>);
 /// as the focused editor.
 fn new_image_from_default(
     mut world: DeferredWorld,
-    entity: Entity,
-    _: bevy::ecs::component::ComponentId,
+    bevy::ecs::lifecycle::HookContext { entity, .. }: bevy::ecs::lifecycle::HookContext,
 ) {
     let mut images = world.resource_mut::<Assets<Image>>();
     let default_image = images.add(Image::default());
@@ -96,8 +95,7 @@ fn create_cosmic_font_system(cosmic_font_config: CosmicFontConfig) -> cosmic_tex
 
 #[cfg(test)]
 mod tests {
-    use bevy::input::keyboard::KeyboardInput;
-
+ 
     use super::*;
 
     fn test_spawn_cosmic_edit_system(
@@ -107,40 +105,8 @@ mod tests {
         let attrs = cosmic_text::Attrs::new();
         commands.spawn(
             CosmicEditBuffer::new(&mut font_system, cosmic_text::Metrics::new(20., 20.))
-                .with_rich_text(&mut font_system, vec![("Blah", attrs)], attrs),
+                .with_rich_text(&mut font_system, vec![("Blah", attrs.clone())], attrs),
         );
     }
 
-    #[test]
-    #[ignore] // would need to support MinimalPlugins as well as DefaultPlugins
-    fn test_spawn_cosmic_edit() {
-        let mut app = App::new();
-        app.add_plugins(TaskPoolPlugin::default());
-        app.add_plugins(AssetPlugin::default());
-        app.insert_resource(CosmicFontSystem(create_cosmic_font_system(
-            CosmicFontConfig::default(),
-        )));
-        app.add_systems(Update, test_spawn_cosmic_edit_system);
-
-        // todo: these lines probably won't do anything now,
-        // maybe we should test for something different?
-        let input = ButtonInput::<KeyCode>::default();
-        app.insert_resource(input);
-        let mouse_input: ButtonInput<MouseButton> = ButtonInput::<MouseButton>::default();
-        app.insert_resource(mouse_input);
-
-        app.add_event::<KeyboardInput>();
-
-        app.update();
-
-        let mut text_nodes_query = app.world_mut().query::<&CosmicEditBuffer>();
-        for cosmic_editor in text_nodes_query.iter(app.world()) {
-            insta::assert_debug_snapshot!(cosmic_editor
-                .inner()
-                .lines
-                .iter()
-                .map(|line| line.text())
-                .collect::<Vec<_>>());
-        }
-    }
 }

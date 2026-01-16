@@ -15,7 +15,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             TextEdit,
             CosmicEditBuffer::default(),
             DefaultAttrs(AttrsOwned::new(
-                Attrs::new().color(bevy::color::palettes::basic::LIME.to_cosmic()),
+                &Attrs::new().color(bevy::color::palettes::basic::LIME.to_cosmic()),
             )),
             CosmicBackgroundImage(Some(bg_image_handle)),
             Node {

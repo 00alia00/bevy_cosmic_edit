@@ -5,6 +5,7 @@ use render_implementations::prelude::*;
 
 use crate::render::WidgetBufferCoordTransformation;
 use crate::render_implementations::CosmicWidgetSize;
+use crate::render_implementations::Result;
 use crate::{prelude::*, CosmicTextAlign};
 
 /// Responsible for translating a world coordinate to a buffer coordinate
@@ -17,26 +18,26 @@ pub(crate) struct RelativeQuery {
     ui_cursor_position: Option<&'static RelativeCursorPosition>,
 }
 
-impl<'s> std::ops::Deref for RelativeQueryItem<'s> {
-    type Target = render_implementations::RenderTypeScanItem<'s>;
+impl<'w, 's> std::ops::Deref for RelativeQueryItem<'w, 's> {
+    type Target = render_implementations::RenderTypeScanItem<'w, 's>;
 
     fn deref(&self) -> &Self::Target {
         self.widget_size.deref()
     }
 }
 
-impl RelativeQueryItem<'_> {
+impl RelativeQueryItem<'_, '_> {
     pub fn compute_buffer_coord(&self, hit_data: &HitData, buffer_size: Vec2) -> Result<Vec2> {
         match self.scan()? {
             SourceType::Sprite => {
                 if hit_data.normal != Some(Vec3::Z) {
                     warn!(?hit_data, "Normal is not out of screen, skipping");
-                    return Err(RenderTargetError::SpriteUnexpectedNormal);
+                    return Err(RenderTargetError::SpriteUnexpectedNormal.into());
                 }
 
                 let world_position = hit_data
                     .position
-                    .ok_or(RenderTargetError::SpriteExpectedHitdataPosition)?;
+                    .ok_or_else(|| Into::<bevy::ecs::error::BevyError>::into(RenderTargetError::SpriteExpectedHitdataPosition))?;
                 let RelativeQueryItem {
                     sprite_global_transform,
                     text_align,
@@ -69,11 +70,11 @@ impl RelativeQueryItem<'_> {
                     ..
                 } = self;
                 let cursor_position_normalized = ui_cursor_position
-                    .ok_or(RenderTargetError::required_component_missing::<
+                    .ok_or_else(|| Into::<bevy::ecs::error::BevyError>::into(RenderTargetError::required_component_missing::<
                         RelativeCursorPosition,
-                    >())?
+                    >()))?
                     .normalized
-                    .ok_or(RenderTargetError::UiExpectedCursorPosition)?;
+                    .ok_or_else(|| Into::<bevy::ecs::error::BevyError>::into(RenderTargetError::UiExpectedCursorPosition))?;
 
                 let widget_size = widget_size.logical_size()?;
                 let relative_position = cursor_position_normalized * widget_size;

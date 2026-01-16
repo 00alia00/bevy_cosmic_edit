@@ -10,7 +10,7 @@ fn setup(
     windows: Query<&Window, With<PrimaryWindow>>,
     mut font_system: ResMut<CosmicFontSystem>,
 ) {
-    let primary_window = windows.single();
+    let primary_window = windows.single().unwrap();
     let camera_bundle = (
         Camera2d,
         Camera {
@@ -30,7 +30,7 @@ fn setup(
             CosmicEditBuffer::new(&mut font_system, Metrics::new(14., 18.)).with_text(
                 &mut font_system,
                 "😀😀😀 x => y",
-                attrs,
+                attrs.clone(),
             ),
             CosmicBackgroundColor(bevy::color::palettes::css::ALICE_BLUE.into()),
             Sprite {

@@ -28,7 +28,7 @@ fn setup(mut commands: Commands, mut font_system: ResMut<CosmicFontSystem>) {
             ScrollEnabled(true),
             CosmicTextAlign::top_left(),
             DefaultAttrs(AttrsOwned::new(
-                Attrs::new().color(bevy::color::palettes::css::LIMEGREEN.to_cosmic()),
+                &Attrs::new().color(bevy::color::palettes::css::LIMEGREEN.to_cosmic()),
             )),
             // CosmicWrap::InfiniteLine,
             Node {

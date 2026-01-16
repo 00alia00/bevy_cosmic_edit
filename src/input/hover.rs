@@ -1,15 +1,15 @@
-use bevy::{window::SystemCursorIcon, winit::cursor::CursorIcon};
+use bevy::window::{CursorIcon, SystemCursorIcon};
 
 use crate::prelude::*;
 
 use super::{warn_no_editor_on_picking_event, InputState};
 
 /// Whenever a pointer enters a widget
-#[derive(Event, Debug, Reflect)]
+#[derive(Message, Debug, Reflect)]
 pub struct TextHoverIn;
 
 /// Whenever a pointer exits a widget
-#[derive(Event, Debug, Reflect)]
+#[derive(Message, Debug, Reflect)]
 pub struct TextHoverOut;
 
 /// What cursor icon to show when hovering over a widget
@@ -60,11 +60,11 @@ impl InputState {
 }
 
 pub(super) fn handle_hover_start(
-    trigger: Trigger<Pointer<Over>>,
+    event: On<Pointer<Over>>,
     mut editor: Query<&mut InputState, With<CosmicEditBuffer>>,
-    mut hover_in_evw: EventWriter<TextHoverIn>,
+    mut hover_in_evw: MessageWriter<TextHoverIn>,
 ) {
-    let Ok(mut input_state) = editor.get_mut(trigger.target) else {
+    let Ok(mut input_state) = editor.get_mut(event.entity) else {
         warn_no_editor_on_picking_event("handling cursor `Over` event");
         return;
     };
@@ -72,15 +72,15 @@ pub(super) fn handle_hover_start(
     input_state.start_hovering();
 
     if input_state.is_hovering() {
-        hover_in_evw.send(TextHoverIn);
+        hover_in_evw.write(TextHoverIn);
     }
 }
 
 pub(super) fn handle_hover_continue(
-    trigger: Trigger<Pointer<Move>>,
+    event: On<Pointer<Move>>,
     mut editor: Query<&mut InputState, With<CosmicEditBuffer>>,
 ) {
-    let Ok(mut input_state) = editor.get_mut(trigger.target) else {
+    let Ok(mut input_state) = editor.get_mut(event.entity) else {
         warn_no_editor_on_picking_event("handling cursor `Move` event");
         return;
     };
@@ -89,11 +89,11 @@ pub(super) fn handle_hover_continue(
 }
 
 pub(super) fn handle_hover_end(
-    trigger: Trigger<Pointer<Out>>,
+    event: On<Pointer<Out>>,
     mut editor: Query<&mut InputState, With<CosmicEditBuffer>>,
-    mut hover_out_evw: EventWriter<TextHoverOut>,
+    mut hover_out_evw: MessageWriter<TextHoverOut>,
 ) {
-    let Ok(mut input_state) = editor.get_mut(trigger.target) else {
+    let Ok(mut input_state) = editor.get_mut(event.entity) else {
         warn_no_editor_on_picking_event("handling cursor `Out` event");
         return;
     };
@@ -101,6 +101,6 @@ pub(super) fn handle_hover_end(
     input_state.end_hovering();
 
     if !input_state.is_hovering() {
-        hover_out_evw.send(TextHoverOut);
+        hover_out_evw.write(TextHoverOut);
     }
 }

@@ -24,8 +24,8 @@ fn setup(mut commands: Commands, mut font_system: ResMut<CosmicFontSystem>) {
             TextEdit,
             CosmicEditBuffer::new(&mut font_system, Metrics::new(20., 20.)).with_rich_text(
                 &mut font_system,
-                vec![("", attrs)],
-                attrs,
+                vec![("", attrs.clone())],
+                attrs.clone(),
             ),
             Placeholder::new(
                 "Placeholder",

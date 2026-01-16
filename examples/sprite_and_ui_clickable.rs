@@ -16,7 +16,7 @@ fn setup(mut commands: Commands) {
             TextEdit,
             CosmicEditBuffer::default(),
             DefaultAttrs(AttrsOwned::new(
-                Attrs::new().color(bevy::color::palettes::css::LIMEGREEN.to_cosmic()),
+                &Attrs::new().color(bevy::color::palettes::css::LIMEGREEN.to_cosmic()),
             )),
             MaxLines(1),
             CosmicWrap::InfiniteLine,
@@ -51,9 +51,9 @@ fn setup(mut commands: Commands) {
 }
 
 fn ev_test(
-    mut evr_on: EventReader<TextHoverIn>,
-    mut evr_out: EventReader<TextHoverOut>,
-    mut evr_type: EventReader<CosmicTextChanged>,
+    mut evr_on: MessageReader<TextHoverIn>,
+    mut evr_out: MessageReader<TextHoverOut>,
+    mut evr_type: MessageReader<CosmicTextChanged>,
 ) {
     for _ev in evr_on.read() {
         println!("IN");
