@@ -29,7 +29,10 @@ RUSTFLAGS=--cfg=web_sys_unstable_apis cargo r --target wasm32-unknown-unknown --
 
 | bevy   | bevy_cosmic_edit |
 | ------ | ---------------- |
-| 0.15.0 | 0.26 - latest    |
+| 0.18.0 | 0.27 - latest    |
+| 0.17.0 |                  |
+| 0.16.0 |                  |
+| 0.15.0 | 0.26             |
 | 0.14.0 | 0.21 - 0.25      |
 | 0.13.0 | 0.16 - 0.20      |
 | 0.12.* | 0.15             |
